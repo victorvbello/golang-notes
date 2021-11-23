@@ -3,6 +3,10 @@
 We have two types that implement the shape interface, because but have de method `area() float32`
 
 ```go
+// You can edit this code!
+// Click here and start typing.
+// You can edit this code!
+// Click here and start typing.
 package main
 
 import (
@@ -15,7 +19,7 @@ type shape interface {
 }
 
 func info(sh shape) {
-	fmt.Printf("the area is %f of type %T\n", sh.area(), sh)
+	fmt.Printf("the area is %.2f of type %T\n", sh.area(), sh)
 }
 
 type squared struct {
@@ -28,16 +32,21 @@ func (s squared) area() float32 {
 }
 
 type circle struct {
-	ratio float32
+	radius float32
 }
 
 func (c circle) area() float32 {
-	return math.Pi * c.ratio
+	return math.Pi * c.radius
 }
 
 func main() {
-	s := squared{2, 3}
-	c := circle{4}
+	s := squared{
+		length: 2,
+		width:  3,
+	}
+	c := circle{
+		radius: 4,
+	}
 
 	info(s)
 	info(c)
