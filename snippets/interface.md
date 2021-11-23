@@ -3,10 +3,6 @@
 We have two types that implement the shape interface, because but have de method `area() float32`
 
 ```go
-// You can edit this code!
-// Click here and start typing.
-// You can edit this code!
-// Click here and start typing.
 package main
 
 import (
@@ -53,3 +49,5 @@ func main() {
 
 }
 ```
+
+**Code:** https://go.dev/play/p/pRuKV2SskQA
