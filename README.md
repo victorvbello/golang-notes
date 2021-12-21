@@ -4,6 +4,7 @@
 - [Interface implementation](./snippets/interface.md)
 - [Goroutine Scope](./snippets/goroutine-scope.md)
 - [Method Sets](./snippets/method-sets.md)
+- [Channels](./snippets/channels.md)
 
 ## Good Practices
 
