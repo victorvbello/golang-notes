@@ -36,4 +36,101 @@ func main() {
 }
 
 ```
-**Code:** https://go.dev/play/p/jXM_D4IpCam.go
+**Code:** https://go.dev/play/p/jXM_D4IpCam
+
+---
+
+This code show how to implement fan in pattern using channels
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type Notify interface {
+	Send()
+}
+
+type MailNotify struct {
+	Email string
+	Body  string
+}
+
+func (mN *MailNotify) Send() {
+	fmt.Printf("Sending mail to: <%s>, %s\n", mN.Email, mN.Body)
+}
+
+type SmsNotify struct {
+	Tfl string
+	Msg string
+}
+
+func (mN *SmsNotify) Send() {
+	fmt.Printf("Sending sms to: <%s>, %s\n", mN.Tfl, mN.Msg)
+}
+
+// fan-in function
+func sendNotification(cMail <-chan MailNotify, cSms <-chan SmsNotify) <-chan Notify {
+	nc := make(chan Notify)
+	go func() {
+		for {
+			var n MailNotify
+			n = <-cMail
+			nc <- &n
+		}
+	}()
+
+	go func() {
+		for {
+			var n SmsNotify
+			n = <-cSms
+			nc <- &n
+		}
+	}()
+	return nc
+}
+
+func sendRandomEmail() <-chan MailNotify {
+	nMc := make(chan MailNotify)
+	go func() {
+		for i := 1; ; i++ {
+			nMc <- MailNotify{
+				Email: fmt.Sprintf("test-email-%d@test.com", i),
+				Body:  fmt.Sprintf("Hi this is a test body for email %d", i),
+			}
+			time.Sleep(time.Duration(800 * time.Millisecond))
+		}
+		close(nMc)
+	}()
+	return nMc
+}
+
+func sendRandomSms() <-chan SmsNotify {
+	nSc := make(chan SmsNotify)
+	go func() {
+		for i := 1; ; i++ {
+			nSc <- SmsNotify{
+				Tfl: fmt.Sprintf("111-11-111-%d", i),
+				Msg: fmt.Sprintf("Hi this is a test msg for sms %d", i),
+			}
+			time.Sleep(time.Duration(500 * time.Millisecond))
+		}
+		close(nSc)
+	}()
+	return nSc
+}
+
+func main() {
+	notifyC := sendNotification(sendRandomEmail(), sendRandomSms())
+	for i := 0; i < 10; i++ {
+		n := <-notifyC
+		n.Send()
+	}
+}
+
+```
+
+**Code:** https://go.dev/play/p/TNZNawCu5N3
