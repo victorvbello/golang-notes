@@ -1,4 +1,4 @@
-//Package hero make heroes can attack and fly
+// Package hero make heroes can attack and fly
 package hero
 
 import (
