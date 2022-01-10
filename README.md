@@ -1,3 +1,6 @@
+## Benchmarks
+- [Benchmarks](./benchmarks/index.md)
+
 ## Snippets
 
 - [Array vs Slice](./snippets/array-vs-slice.md)
