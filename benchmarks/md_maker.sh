@@ -18,4 +18,4 @@ MD_FILE_NAME=$NAME_LOWER".md"
 echo $(rm -f "./$MD_FILE_NAME")
 echo $BODY >> ./$MD_FILE_NAME
 
-echo "- [$NAME](./$DIR_NAME/$MD_FILE_NAME)\n" >> "../index.md"
+echo "- [$NAME](./$DIR_NAME/$MD_FILE_NAME)" >> "../index.md"
