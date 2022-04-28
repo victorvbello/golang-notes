@@ -13,3 +13,7 @@
 - [Channels select](./snippets/chan-select.md)
 - [Slicing slice](./snippets/slicing-slice.md)
 - [Switch interface type](./snippets/switch-interface-type.md)
+
+## Design Patterns
+- [Factory Pattern](./design-patterns/factory_pattern)
+- [Singleton Pattern](./design-patterns/singleton_pattern)
