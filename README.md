@@ -14,6 +14,11 @@
 - [Slicing slice](./snippets/slicing-slice.md)
 - [Switch interface type](./snippets/switch-interface-type.md)
 
+## Utils
+
+- [MIME type file](./utils/git_checker_changes_branches/index.md)
+- [Git checker changes branches](./utils/mime_type/index.md)
+
 ## Design Patterns
 - [Factory Pattern](./design-patterns/factory_pattern)
 - [Singleton Pattern](./design-patterns/singleton_pattern)
