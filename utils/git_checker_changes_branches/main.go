@@ -134,7 +134,7 @@ func main() {
 	repoChan := make(chan repoInputItem)
 	wg.Add(len(allRepos))
 	for rI, r := range allRepos {
-		repoUpdate := r["updated_at"].(string)
+		repoUpdate := r["pushed_at"].(string)
 		uTime, err := time.Parse(time.RFC3339, repoUpdate)
 
 		if err != nil {
