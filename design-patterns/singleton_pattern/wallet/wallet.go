@@ -17,7 +17,7 @@ func createInstance() *walletUnique {
 	return new(walletUnique)
 }
 
-func GetcurrentWallet() *walletUnique {
+func GetCurrentWallet() *walletUnique {
 	once.Do(func() {
 		currentWallet = createInstance()
 		fmt.Println("Instance of walletUnique create")

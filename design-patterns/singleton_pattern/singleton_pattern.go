@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	myWallet := wallet.GetcurrentWallet()
+	myWallet := wallet.GetCurrentWallet()
 	fmt.Printf("myWallet -- Pointer %p\n", myWallet)
 	fmt.Printf("myWallet -- Balance (%.2f)\n", myWallet.Balance())
 
@@ -30,7 +30,7 @@ func main() {
 
 	fmt.Println("................")
 
-	myWallet2 := wallet.GetcurrentWallet()
+	myWallet2 := wallet.GetCurrentWallet()
 	fmt.Printf("myWallet2 -- Pointer %p\n", myWallet2)
 	fmt.Printf("myWallet2 -- Balance (%.2f)\n", myWallet2.Balance())
 }
