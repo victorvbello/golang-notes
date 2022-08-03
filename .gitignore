@@ -1,2 +1,3 @@
 .DS_STORE
-utils/git_checker_changes_branches/repos.json
+utils/json_translate/files/*
+utils/json_translate/output/*

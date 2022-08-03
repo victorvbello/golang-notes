@@ -117,7 +117,7 @@ func main() {
 
 	for {
 		log.Println("Found repos")
-		currentRepos, err := HttpRequestSlice("GET", fmt.Sprintf("%s/orgs/%s/repos?per_page=100&type=private&sort=updated&page=%d", GITHUB_API_BASE_URL, organization, pageRepos), headers)
+		currentRepos, err := HttpRequestSlice(http.MethodGet, fmt.Sprintf("%s/orgs/%s/repos?per_page=100&type=private&sort=updated&page=%d", GITHUB_API_BASE_URL, organization, pageRepos), headers)
 		if err != nil {
 			log.Fatal(fmt.Errorf("HttpRequestSlice: %w", err))
 			break
@@ -153,14 +153,14 @@ func main() {
 			cRepo := repoInputItem{
 				Repo: rName,
 			}
-			resultBranches, err := HttpRequestSlice("GET", fmt.Sprintf("%s/repos/%s/branches?protected=true", GITHUB_API_BASE_URL, rName), headers)
+			resultBranches, err := HttpRequestSlice(http.MethodGet, fmt.Sprintf("%s/repos/%s/branches?protected=true", GITHUB_API_BASE_URL, rName), headers)
 			if err != nil {
 				log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequest: %w", err))
 				return
 			}
 
 			if len(resultBranches) == 0 {
-				resultBranches, err = HttpRequestSlice("GET", fmt.Sprintf("%s/repos/%s/branches", GITHUB_API_BASE_URL, rName), headers)
+				resultBranches, err = HttpRequestSlice(http.MethodGet, fmt.Sprintf("%s/repos/%s/branches", GITHUB_API_BASE_URL, rName), headers)
 				if err != nil {
 					log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequest: %w", err))
 					return
@@ -187,7 +187,7 @@ func main() {
 
 			log.Printf("[%d] Opted [%s] (%s) (%s)\n", index, cRepo.Repo, cRepo.Branch1, cRepo.Branch2)
 
-			result, err := HttpRequest("GET", fmt.Sprintf("%s/repos/%s/compare/%s...%s", GITHUB_API_BASE_URL, cRepo.Repo, cRepo.Branch1, cRepo.Branch2), headers)
+			result, err := HttpRequest(http.MethodGet, fmt.Sprintf("%s/repos/%s/compare/%s...%s", GITHUB_API_BASE_URL, cRepo.Repo, cRepo.Branch1, cRepo.Branch2), headers)
 			if err != nil {
 				log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequest: %w", err))
 			}
