@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"gonotes/utils/json_translate/helpers"
 	"log"
@@ -17,55 +15,6 @@ const (
 	FILES_PATH        = "./files"
 	FILES_OUTPUT_PATH = "./output"
 )
-
-type anyJSONObject interface{}
-
-type orderedMap struct {
-	Value interface{}
-	Keys  []string
-}
-
-func (um orderedMap) UnmarshalJSON(b []byte) error {
-	if err := json.Unmarshal(b, &um.Value); err != nil {
-		return err
-	}
-	fmt.Println("...")
-	for key, _ := range um.Value.(map[string]interface{}) {
-		fmt.Println("---", key)
-		um.Keys = append(um.Keys, key)
-	}
-	return nil
-}
-
-func (um orderedMap) MarshalJSON() ([]byte, error) {
-	var b []byte
-	buf := bytes.NewBuffer(b)
-	buf.WriteRune('{')
-	l := len(um.Keys)
-	if um.Value == nil {
-		buf.WriteRune('}')
-		return buf.Bytes(), nil
-	}
-	valueMap := um.Value.(map[string]interface{})
-	for i, key := range um.Keys {
-		km, err := json.Marshal(key)
-		if err != nil {
-			return nil, err
-		}
-		buf.Write(km)
-		buf.WriteRune(':')
-		vm, err := json.Marshal(valueMap[key])
-		if err != nil {
-			return nil, err
-		}
-		buf.Write(vm)
-		if i != l-1 {
-			buf.WriteRune(',')
-		}
-	}
-	buf.WriteRune('}')
-	return buf.Bytes(), nil
-}
 
 func main() {
 	args := os.Args[1:]
