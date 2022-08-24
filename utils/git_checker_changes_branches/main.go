@@ -135,17 +135,20 @@ func main() {
 	wg.Add(len(allRepos))
 	for rI, r := range allRepos {
 		repoUpdate := r["pushed_at"].(string)
+		repoName := r["full_name"].(string)
 		uTime, err := time.Parse(time.RFC3339, repoUpdate)
 
 		if err != nil {
 			log.Fatalf("[%d] %v", rI, fmt.Errorf(" time.Parse: %w", err))
 			continue
 		}
-		if uTime.Year() < time.Now().Year() {
+
+		log.Printf("[%s] last updated on: (%s)", repoName, uTime.Format("2006-01-02"))
+
+		if time.Now().Sub(uTime) >= 360*24*time.Hour {
 			wg.Done()
 			continue
 		}
-		repoName := r["full_name"].(string)
 		go func(cwg *sync.WaitGroup, rName string, index int) {
 			defer func() {
 				cwg.Done()

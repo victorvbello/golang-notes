@@ -113,7 +113,7 @@ func GetFileContent(file *os.File) ([]byte, error) {
 }
 
 func TranslateString(s string) (string, error) {
-	if s == "" {
+	if strings.ReplaceAll(s, " ", "") == "" {
 		return "", nil
 	}
 	headers := requestHeaders(map[string]string{
@@ -207,7 +207,8 @@ func GetMapValue(jsonContent []byte) ([]byte, error) {
 		gErr = fmt.Errorf("GetMapValue.json.Unmarshal[jsonContent] %v", err)
 		return finalValue, gErr
 	}
-	for _, mE := range inputValue {
+	fmt.Printf("GetMapValue.")
+	for index, mE := range inputValue {
 		item := mE.Value
 		var itemInterface interface{}
 		err := json.Unmarshal(item, &itemInterface)
@@ -223,7 +224,11 @@ func GetMapValue(jsonContent []byte) ([]byte, error) {
 			Value: json.RawMessage(result),
 		}
 		resultValue = append(resultValue, entry)
+		if index%10 == 0 {
+			go fmt.Printf("%d%%..", ((index+1)*100)/len(inputValue))
+		}
 	}
+	fmt.Printf("\n")
 
 	finalValue, err := json.MarshalIndent(resultValue, "", "\t")
 	if err != nil {

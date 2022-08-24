@@ -32,11 +32,16 @@ func main() {
 		log.Fatal("path, language from and language to are required")
 	}
 
+	currentInputPath := path.Join(currentPath, FILES_PATH)
+
 	helpers.SetTranslateConfig(helpers.TranslateConfig{LanguageFrom: lFront, LanguageTo: lTo})
 
-	filePaths, err := helpers.GetFilesFromDir(path.Join(currentPath, FILES_PATH), "*.json")
+	filePaths, err := helpers.GetFilesFromDir(currentInputPath, "*.json")
 	if err != nil {
 		fmt.Printf("Error %v \n", err)
+	}
+	if len(filePaths) == 0 {
+		fmt.Printf("Error without input .json files in %s\n", currentInputPath)
 	}
 	for fileIndex, filePath := range filePaths {
 		start := time.Now()
