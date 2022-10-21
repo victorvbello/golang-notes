@@ -16,10 +16,11 @@
 
 ## Utils
 
-- [MIME type file](./utils/git_checker_changes_branches/index.md)
-- [Git checker changes branches](./utils/mime_type/index.md)
+- [MIME type file](./utils/mime_type/index.md)
+- [GitHub checker changes branches](./utils/git_checker_changes_branches/index.md)
 - [Simple JSON Translate](./utils/json_translate/index.md)
 
 ## Design Patterns
 - [Factory Pattern](./design-patterns/factory_pattern)
 - [Singleton Pattern](./design-patterns/singleton_pattern)
+- [Builder Pattern](./design-patterns/builder_pattern)
