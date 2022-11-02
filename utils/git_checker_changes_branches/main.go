@@ -100,12 +100,13 @@ func main() {
 	var headers requestHeaders
 
 	if len(os.Args) < 2 {
-		log.Fatal("token and fileInputPath is required")
+		log.Fatal("token and organization name is required")
 	}
 
 	organization = args[0]
 	token = args[1]
 
+	log.Println("organization name", organization)
 	log.Println("token", token)
 
 	headers = requestHeaders(map[string]string{
