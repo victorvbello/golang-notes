@@ -11,3 +11,5 @@ go test ./... -bench=. | sh ../md_maker.sh
 - [Strings concat](./strings_concat/strings_concat.md)
 - [Json encoder vs marshal](./json_encoder_vs_marshal/json_encoder_vs_marshal.md)
 - [Chan vs mutex](./chan_vs_mutex/chan_vs_mutex.md)
+- [For v2 range](./for_v2_range/for_v2_range.md)
+- [Copy file](./copy_file/copy_file.md)
