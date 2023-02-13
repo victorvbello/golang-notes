@@ -81,7 +81,7 @@ func FileCopy_os_Read_os_Write(desFilePath, oriFilePath string) error {
 func main() {
 	rand.Seed(time.Now().Unix())
 	fmt.Println("File Copy it's running")
-	if err := FileCopy_io_copy(fmt.Sprintf("./new_%d_test.txt", rand.Intn(1000)), "./test.txt"); err != nil {
+	if err := FileCopy_io_copy(fmt.Sprintf("./new_%d_test.txt", rand.Intn(1000)), "../test.txt"); err != nil {
 		fmt.Println("Error", err)
 	}
 	fmt.Println("File Copy it's end")
