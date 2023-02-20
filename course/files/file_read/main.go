@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error os.Open", err)
 	}
+	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	line := 0
 	for scanner.Scan() {
