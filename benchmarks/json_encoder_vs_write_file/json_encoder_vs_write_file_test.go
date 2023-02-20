@@ -14,6 +14,10 @@ type Person struct {
 
 var p1 Person = Person{"Victor", "Bello"}
 
+func removeTestFile(fileName string) error {
+	return os.Remove(fileName)
+}
+
 func BenchmarkJSONEncoder(b *testing.B) {
 	fileName := "./test_encode.json"
 	f, err := os.Create(fileName)
@@ -27,7 +31,7 @@ func BenchmarkJSONEncoder(b *testing.B) {
 		}
 	}
 	f.Close()
-	if e := os.Remove(fileName); e != nil {
+	if e := removeTestFile(fileName); e != nil {
 		b.Error(e)
 	}
 }
@@ -48,9 +52,10 @@ func BenchmarkWriteFileWithMarshal(b *testing.B) {
 		if err != nil {
 			b.Error(err)
 		}
+		writeBuff.Flush()
 	}
 	f.Close()
-	if e := os.Remove(fileName); e != nil {
+	if e := removeTestFile(fileName); e != nil {
 		b.Error(e)
 	}
 }
