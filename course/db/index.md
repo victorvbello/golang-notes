@@ -8,4 +8,4 @@ to do this i created the methods `getLastInserteIdUsingConcurrency` and `getLast
 the flow receive from de server one response on binary, this response if is OK, contain the rows affected and if is a single
 insert contains de las insert id
 
-> With this result it is determined that inserts can be executed using concurrencies without affecting the result of the last inserted id
+> With this result it is determined that inserts can be executed using concurrency without affecting the result of the last inserted id
