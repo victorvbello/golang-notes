@@ -15,3 +15,4 @@ go test ./... -bench=. | sh ../md_maker.sh
 - [Copy file](./copy_file/copy_file.md)
 - [Json encoder vs write file](./json_encoder_vs_write_file/json_encoder_vs_write_file.md)
 - [Json decoder vs read file](./json_decoder_vs_read_file/json_decoder_vs_read_file.md)
+- [Switch default vs switch case](./switch_default_vs_switch_case/switch_default_vs_switch_case.md)

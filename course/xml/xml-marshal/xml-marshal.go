@@ -6,19 +6,19 @@ import (
 )
 
 type Crew struct {
-	XMLName xml.Name `xml:crew`
-	ID      int      `xml:"id,omitempty"`
-	Name    string   `xml:"name,attr"`
-	Range   string   `xml:"range,omitempty"`
-	Tasks   []string `xml:"task>item-task"`
+	ID    int      `xml:"id,omitempty"`
+	Name  string   `xml:"name,attr"`
+	Range string   `xml:"range,omitempty"`
+	Tasks []string `xml:"task>item-task"`
 }
 
 type Boat struct {
-	XMLName xml.Name `xml:ship`
-	Captain Crew     `xml:"captain"`
-	Code    string   `xml:"ship-code"`
-	Type    string   `xml:"ship-type"`
-	Crew    []Crew   `xml:"souls>soul"`
+	XMLName xml.Name `xml:"ship"`
+	id      int
+	Captain Crew   `xml:"captain"`
+	Code    string `xml:"ship-details>serial-code"`
+	Type    string `xml:"ship-details>ship-type"`
+	Crew    []Crew `xml:"souls>soul"`
 }
 
 func main() {
@@ -33,6 +33,7 @@ func main() {
 	}
 
 	nautilus := Boat{
+		id:      1,
 		Captain: captainNemo,
 		Code:    "F0R3V3R-H4PPY",
 		Type:    "Oasis class",

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <ship>
+   <captain name="Nemo">
+     <range>Captain</range>
+     <task>
+       <item-task>Ship driver</item-task>
+       <item-task>Define routes</item-task>
+       <item-task>Binding Marriages</item-task>
+     </task>
+   </captain>
+   <ship-details>
+     <serial-code>F0R3V3R-H4PPY</serial-code>
+     <ship-type>Oasis class</ship-type>
+   </ship-details>
+   <souls>
+     <soul name="Nemo">
+       <range>Captain</range>
+       <task>
+         <item-task>Ship driver</item-task>
+         <item-task>Define routes</item-task>
+         <item-task>Binding Marriages</item-task>
+       </task>
+     </soul>
+     <soul name="Victor">
+       <id>100</id>
+       <task></task>
+     </soul>
+     <soul name="Rodrigo">
+       <id>101</id>
+       <task></task>
+     </soul>
+     <soul name="Tere">
+       <id>102</id>
+       <task></task>
+     </soul>
+     <soul name="homeless">
+       <task></task>
+     </soul>
+   </souls>
+ </ship>
