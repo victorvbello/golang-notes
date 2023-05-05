@@ -12,7 +12,6 @@
       "**/.hg": true,
       "**/CVS": true,
       "**/.DS_Store": true,
-      "**/node_modules": true
     },
     "workbench.colorCustomizations": {
       "statusBar.background": "#ce0a0a",
@@ -22,6 +21,10 @@
     "dateTime.showDayOfMonth": true,
     "dateTime.showDayOfWeek": true,
     "dateTime.showMonth": true,
-    "dateTime.padDays": true
+    "dateTime.padDays": true,
+    "go.formatTool": "goimports",
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
   }
 }
