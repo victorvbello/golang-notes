@@ -38,7 +38,7 @@ func FileCopy_io_copy(desFilePath, oriFilePath string) error {
 }
 
 func FileCopy_ioutil_WriteFile(desFilePath, oriFilePath string) error {
-	oriContent, err := ioutil.ReadFile(oriFilePath)
+	oriContent, err := os.ReadFile(oriFilePath)
 	if err != nil {
 		return err
 	}
