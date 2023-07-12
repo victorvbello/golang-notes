@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"./mystring"
+	"gonotes/course/testing/mystring"
 )
 
 func main() {

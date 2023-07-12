@@ -1,0 +1,15 @@
+syntax = "proto3";
+package hero;
+
+message Hero{
+    string name = 1;
+    string Alias = 2;
+
+    message HeroSkills {
+        string kind = 1;
+        float damage = 2;
+        int32 energy = 3;
+    }
+
+    repeated HeroSkills Skills = 3;
+}
