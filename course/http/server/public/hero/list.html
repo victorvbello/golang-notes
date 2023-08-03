@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <header>
+      <h1>Hero List</h1>
+    </header>
+
+    {{template "nav_menu"}}
+
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Alias</th>
+      </tr>
+      {{range .}}
+      <tr>
+        <td><a href="/hero-detail/{{.ID}}">{{.ID}}</a></td>
+        <td>{{.Name}}</td>
+        <td>{{.Alias}}</td>
+      </tr>
+      {{end}}
+    </table>
+  </body>
+</html>

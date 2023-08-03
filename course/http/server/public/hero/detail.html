@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <header>
+      <h1>Hero detail</h1>
+    </header>
+
+    {{template "nav_menu"}}
+
+<article>
+  <h1>ID</h1>
+  <p>{{.ID}}</p>
+  <h1>Name</h1>
+  <p>{{.Name}}</p>
+  <h1>Alias</h1>
+  <p>{{.Alias}}</p>
+  <h1>Skills</h1>
+  <table>
+    <tr>
+      <th>Kind</th>
+      <th>Damage</th>
+      <th>Energy</th>
+    </tr>
+    {{range .Skills}}
+    <tr>
+      <td>{{.Kind}}</td>
+      <td>{{.Damage}}</td>
+      <td>{{.Energy}}</td>
+    </tr>
+    {{end}}
+  </table>
+</article>
+
+  </body>
+</html>

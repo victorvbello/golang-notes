@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      let socketURL = "ws://localhost:8080/chat-messages/";
+      if (window.location.protocol === "https:") {
+        socketURL = "wss://localhost:8081/chat-messages/";
+      }
+      let socket = null;
+      let currentName = null;
+
+      function sendMsg(event) {
+        event.preventDefault();
+        const name = document.getElementById("name").value;
+        const msg = document.getElementById("message").value;
+
+        document.getElementById("message").value = "";
+
+        if (socket || name === currentName) {
+          socket.send(msg);
+          return;
+        }
+
+        currentName = name;
+        socket = new WebSocket(`${socketURL}?name="${name}"`);
+
+        socket.addEventListener("open", (event) => {
+          socket.send(msg);
+        });
+
+        socket.addEventListener("message", (event) => {
+          const chatBox = document.getElementById("chat-box");
+          chatBox.appendChild(
+            document
+              .createElement("p")
+              .appendChild(document.createTextNode(event.data))
+          );
+          chatBox.appendChild(document.createElement("br"));
+        });
+      }
+      window.addEventListener("DOMContentLoaded", (event) => {
+        console.log("DOM fully loaded and parsed");
+        const form = document.getElementById("form");
+        form.addEventListener("submit", sendMsg);
+      });
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Chat</h1>
+    </header>
+
+    {{template "nav_menu"}}
+
+    <p>Test http server golang</p>
+    <form id="form">
+      Name: <input id="name" required />
+      <div
+        id="chat-box"
+        style="width: 300px; height: 300px; border: 1px solid"
+      ></div>
+      Message:<input id="message" required />
+      <input type="submit" value=">>" />
+    </form>
+  </body>
+</html>

@@ -1,3 +1,4 @@
 .DS_STORE
 utils/json_translate/files/*
 utils/json_translate/output/*
+*.pem
