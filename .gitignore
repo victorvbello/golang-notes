@@ -2,3 +2,7 @@
 utils/json_translate/files/*
 utils/json_translate/output/*
 *.pem
+
+#vscode
+.vscode
+*.code-workspace
