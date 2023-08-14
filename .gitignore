@@ -5,4 +5,3 @@ utils/json_translate/output/*
 
 #vscode
 .vscode
-*.code-workspace

@@ -23,8 +23,8 @@
     "dateTime.showMonth": true,
     "dateTime.padDays": true,
     "go.formatTool": "goimports",
-    "go.goroot": "/Users/boosmap/.gvm/gos/go1.19.5",
-    "go.gopath": "/Users/boosmap/.gvm/pkgsets/go1.19.5/global",
+    "go.goroot": "~/.gvm/gos/go1.19.5",
+    "go.gopath": "~/.gvm/pkgsets/go1.19.5/global",
     "[json]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
