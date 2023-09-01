@@ -2,6 +2,10 @@
 utils/json_translate/files/*
 utils/json_translate/output/*
 *.pem
+*.crt
+*.csr
+*.cnf
+*.key
 
 #vscode
 .vscode

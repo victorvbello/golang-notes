@@ -19,8 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	GreetService_Greet_FullMethodName          = "/greet.GreetService/Greet"
-	GreetService_GreetManyTimes_FullMethodName = "/greet.GreetService/GreetManyTimes"
+	GreetService_Greet_FullMethodName             = "/greet.GreetService/Greet"
+	GreetService_GreetManyTimes_FullMethodName    = "/greet.GreetService/GreetManyTimes"
+	GreetService_LongGreet_FullMethodName         = "/greet.GreetService/LongGreet"
+	GreetService_MultiGreet_FullMethodName        = "/greet.GreetService/MultiGreet"
+	GreetService_GreetWithDeadline_FullMethodName = "/greet.GreetService/GreetWithDeadline"
 )
 
 // GreetServiceClient is the client API for GreetService service.
@@ -29,6 +32,9 @@ const (
 type GreetServiceClient interface {
 	Greet(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (*GreetResponse, error)
 	GreetManyTimes(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (GreetService_GreetManyTimesClient, error)
+	LongGreet(ctx context.Context, opts ...grpc.CallOption) (GreetService_LongGreetClient, error)
+	MultiGreet(ctx context.Context, opts ...grpc.CallOption) (GreetService_MultiGreetClient, error)
+	GreetWithDeadline(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (*GreetResponse, error)
 }
 
 type greetServiceClient struct {
@@ -80,12 +86,89 @@ func (x *greetServiceGreetManyTimesClient) Recv() (*GreetResponse, error) {
 	return m, nil
 }
 
+func (c *greetServiceClient) LongGreet(ctx context.Context, opts ...grpc.CallOption) (GreetService_LongGreetClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[1], GreetService_LongGreet_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetServiceLongGreetClient{stream}
+	return x, nil
+}
+
+type GreetService_LongGreetClient interface {
+	Send(*GreetRequest) error
+	CloseAndRecv() (*GreetResponse, error)
+	grpc.ClientStream
+}
+
+type greetServiceLongGreetClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetServiceLongGreetClient) Send(m *GreetRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetServiceLongGreetClient) CloseAndRecv() (*GreetResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(GreetResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *greetServiceClient) MultiGreet(ctx context.Context, opts ...grpc.CallOption) (GreetService_MultiGreetClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[2], GreetService_MultiGreet_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetServiceMultiGreetClient{stream}
+	return x, nil
+}
+
+type GreetService_MultiGreetClient interface {
+	Send(*GreetRequest) error
+	Recv() (*GreetResponse, error)
+	grpc.ClientStream
+}
+
+type greetServiceMultiGreetClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetServiceMultiGreetClient) Send(m *GreetRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetServiceMultiGreetClient) Recv() (*GreetResponse, error) {
+	m := new(GreetResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *greetServiceClient) GreetWithDeadline(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (*GreetResponse, error) {
+	out := new(GreetResponse)
+	err := c.cc.Invoke(ctx, GreetService_GreetWithDeadline_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreetServiceServer is the server API for GreetService service.
 // All implementations must embed UnimplementedGreetServiceServer
 // for forward compatibility
 type GreetServiceServer interface {
 	Greet(context.Context, *GreetRequest) (*GreetResponse, error)
 	GreetManyTimes(*GreetRequest, GreetService_GreetManyTimesServer) error
+	LongGreet(GreetService_LongGreetServer) error
+	MultiGreet(GreetService_MultiGreetServer) error
+	GreetWithDeadline(context.Context, *GreetRequest) (*GreetResponse, error)
 	mustEmbedUnimplementedGreetServiceServer()
 }
 
@@ -98,6 +181,15 @@ func (UnimplementedGreetServiceServer) Greet(context.Context, *GreetRequest) (*G
 }
 func (UnimplementedGreetServiceServer) GreetManyTimes(*GreetRequest, GreetService_GreetManyTimesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GreetManyTimes not implemented")
+}
+func (UnimplementedGreetServiceServer) LongGreet(GreetService_LongGreetServer) error {
+	return status.Errorf(codes.Unimplemented, "method LongGreet not implemented")
+}
+func (UnimplementedGreetServiceServer) MultiGreet(GreetService_MultiGreetServer) error {
+	return status.Errorf(codes.Unimplemented, "method MultiGreet not implemented")
+}
+func (UnimplementedGreetServiceServer) GreetWithDeadline(context.Context, *GreetRequest) (*GreetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GreetWithDeadline not implemented")
 }
 func (UnimplementedGreetServiceServer) mustEmbedUnimplementedGreetServiceServer() {}
 
@@ -151,6 +243,76 @@ func (x *greetServiceGreetManyTimesServer) Send(m *GreetResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _GreetService_LongGreet_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreetServiceServer).LongGreet(&greetServiceLongGreetServer{stream})
+}
+
+type GreetService_LongGreetServer interface {
+	SendAndClose(*GreetResponse) error
+	Recv() (*GreetRequest, error)
+	grpc.ServerStream
+}
+
+type greetServiceLongGreetServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetServiceLongGreetServer) SendAndClose(m *GreetResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetServiceLongGreetServer) Recv() (*GreetRequest, error) {
+	m := new(GreetRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _GreetService_MultiGreet_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreetServiceServer).MultiGreet(&greetServiceMultiGreetServer{stream})
+}
+
+type GreetService_MultiGreetServer interface {
+	Send(*GreetResponse) error
+	Recv() (*GreetRequest, error)
+	grpc.ServerStream
+}
+
+type greetServiceMultiGreetServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetServiceMultiGreetServer) Send(m *GreetResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetServiceMultiGreetServer) Recv() (*GreetRequest, error) {
+	m := new(GreetRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _GreetService_GreetWithDeadline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GreetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreetServiceServer).GreetWithDeadline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GreetService_GreetWithDeadline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreetServiceServer).GreetWithDeadline(ctx, req.(*GreetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GreetService_ServiceDesc is the grpc.ServiceDesc for GreetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -162,12 +324,27 @@ var GreetService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Greet",
 			Handler:    _GreetService_Greet_Handler,
 		},
+		{
+			MethodName: "GreetWithDeadline",
+			Handler:    _GreetService_GreetWithDeadline_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GreetManyTimes",
 			Handler:       _GreetService_GreetManyTimes_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "LongGreet",
+			Handler:       _GreetService_LongGreet_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "MultiGreet",
+			Handler:       _GreetService_MultiGreet_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "greet.proto",

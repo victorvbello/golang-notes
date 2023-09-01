@@ -17,7 +17,11 @@ $PATH/greet/proto/*.proto
 ```
 
 ### gRPC types
-- [Unary](./greet)
-- [Server Streaming](./calculator)
-- [Client Streaming]()
-- [Bi directional Streaming]()
+- Unary
+>  rpc Service (Request) returns (Response);
+- Server Streaming
+>  rpc Service (Request) returns (stream Response);
+- Client Streaming
+>  rpc Service (stream Request) returns (Response);
+- Bi directional Streaming
+>  rpc Service (stream Request) returns (stream Response);
