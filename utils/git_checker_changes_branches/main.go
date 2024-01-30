@@ -159,14 +159,14 @@ func main() {
 			}
 			resultBranches, err := HttpRequestSlice(http.MethodGet, fmt.Sprintf("%s/repos/%s/branches?protected=true", GITHUB_API_BASE_URL, rName), headers)
 			if err != nil {
-				log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequest: %w", err))
+				log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequestSlice: %w", err))
 				return
 			}
 
 			if len(resultBranches) == 0 {
 				resultBranches, err = HttpRequestSlice(http.MethodGet, fmt.Sprintf("%s/repos/%s/branches", GITHUB_API_BASE_URL, rName), headers)
 				if err != nil {
-					log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequest: %w", err))
+					log.Fatalf("[%d] %v", index, fmt.Errorf("HttpRequestSlice: %w", err))
 					return
 				}
 			}
