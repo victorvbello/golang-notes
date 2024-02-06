@@ -2,15 +2,19 @@ package main
 
 import (
 	"database/sql"
+	"encoding/csv"
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
+
+const testLoadFilePath = "./test-load-file.csv"
 
 var mysqlDB *sql.DB
 var bulkDataByBlockQuery string
@@ -28,8 +32,8 @@ func mysqlPrepareTableLoad() error {
 			user_id INT NOT NULL DEFAULT 0,
 			address_id INT NOT NULL DEFAULT 0,
 			name VARCHAR(255) NULL,
-			validated_user_id TINYINT(1) NULL DEFAULT 0,
-			validated_address_id TINYINT(1) NULL DEFAULT 0,
+			validated_user_id TINYINT(1) NOT NULL DEFAULT 0,
+			validated_address_id TINYINT(1) NOT NULL DEFAULT 0,
 			PRIMARY KEY (id)
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 	`)
@@ -37,13 +41,6 @@ func mysqlPrepareTableLoad() error {
 	if err != nil {
 		return fmt.Errorf("Exec[create]: %v", err)
 	}
-
-	bulkDataByBlockQuery = "INSERT INTO table_benchmark_test_bulk_load (user_id, address_id, name) VALUES "
-	for i := 1; i <= 100000; i++ {
-		bulkDataByBlockQuery += fmt.Sprintf("(%d, %d, '%d'), ", i, i, rand.Int())
-	}
-
-	bulkDataByBlockQuery = strings.TrimRight(bulkDataByBlockQuery, ", ") + ";"
 	return nil
 }
 
@@ -163,7 +160,7 @@ func mysqlInit() error {
 		Port:     3306,
 		Password: "local-pass",
 	}
-	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", conf.User, conf.Password, conf.URL, strconv.Itoa(conf.Port), conf.DBName)
+	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?allowAllFiles=true", conf.User, conf.Password, conf.URL, strconv.Itoa(conf.Port), conf.DBName)
 	mysqlDB, err = sql.Open("mysql", conn)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("mysql error %v", err))
@@ -180,6 +177,36 @@ func mysqlInit() error {
 
 	if err != nil {
 		return fmt.Errorf("drop table_benchmark_test_bulk_order: %v", err)
+	}
+
+	fileData, err := os.Create(testLoadFilePath)
+	if err != nil {
+		return fmt.Errorf("create file data csv %v", err)
+	}
+
+	defer fileData.Close()
+
+	csvFileData := csv.NewWriter(fileData)
+	csvFileData.Comma = ','
+
+	bulkDataByBlockQuery = "INSERT INTO table_benchmark_test_bulk_load (user_id, address_id, name) VALUES "
+	for i := 1; i <= 100000; i++ {
+		bulkDataByBlockQuery += fmt.Sprintf("(%d, %d, '%d'), ", i, i, rand.Int())
+		csvDataRow := []string{
+			fmt.Sprintf("%d", i),
+			fmt.Sprintf("%d", i),
+			fmt.Sprintf("%d", rand.Int())}
+		if err := csvFileData.Write(csvDataRow); err != nil {
+			log.Fatal(fmt.Errorf("write file data csv %v", err))
+		}
+	}
+
+	bulkDataByBlockQuery = strings.TrimRight(bulkDataByBlockQuery, ", ") + ";"
+
+	csvFileData.Flush()
+
+	if err := csvFileData.Error(); err != nil {
+		return fmt.Errorf("writer file data csv %v", err)
 	}
 
 	err = mysqlPrepareTableUser()
@@ -217,6 +244,7 @@ func TestMain(m *testing.M) {
 	}
 	m.Run()
 	mysqlDB.Close()
+	os.Remove(testLoadFilePath)
 }
 
 func BenchmarkInsertOneByOne(b *testing.B) {
@@ -265,6 +293,24 @@ func BenchmarkInsertBlock100000(b *testing.B) {
 		if err != nil {
 			b.Error(err)
 		}
+	}
+}
+
+func BenchmarkInsertLoadFile100000(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		mysql.RegisterLocalFile(testLoadFilePath)
+
+		query := fmt.Sprintf(`
+							LOAD DATA LOCAL INFILE '%s'
+							INTO TABLE table_benchmark_test_bulk_load
+							FIELDS TERMINATED BY ','
+							LINES TERMINATED BY '\n'`, testLoadFilePath)
+		_, err := mysqlDB.Exec(query)
+
+		if err != nil {
+			b.Error(err)
+		}
+		mysql.DeregisterLocalFile(testLoadFilePath)
 	}
 }
 

@@ -24,6 +24,7 @@
     "dateTime.padDays": true,
     "go.formatTool": "goimports",
     "go.goroot": "~/.gvm/gos/go1.19.5",
+    "go.inferGopath": true,
     "go.gopath": "~/.gvm/pkgsets/go1.19.5/global",
     "[json]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"

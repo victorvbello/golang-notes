@@ -18,4 +18,3 @@ go test ./... -bench=. | sh ../md_maker.sh
 - [Switch default vs switch case](./switch_default_vs_switch_case/switch_default_vs_switch_case.md)
 - [Mysql vs redis vs boltdb](./mysql_vs_redis_vs_boltdb/mysql_vs_redis_vs_boltdb.md)
 - [Mysql bulk load](./mysql_bulk_load/mysql_bulk_load.md)
-- [Mysql bulk load](./mysql_bulk_load/mysql_bulk_load.md)
