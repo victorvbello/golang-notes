@@ -18,10 +18,24 @@ message BlogId {
     string id = 1;
 }
 
+message UploadBlogImgRequest {
+    oneof Data {
+        FileMetadata metadata = 1;
+        bytes fileData = 2;
+    }
+}
+
+message FileMetadata {
+    string fileName = 1;
+    string mimeType = 2;
+    string blogID = 3;
+}
+
 service BlogService {
     rpc CreateBlog (Blog) returns (BlogId);
     rpc ReadBlog (BlogId) returns (Blog);
     rpc UpdateBlog (Blog) returns (google.protobuf.Empty);
+    rpc UploadBlogImg(stream UploadBlogImgRequest) returns (google.protobuf.Empty);
     rpc DeleteBlog (BlogId) returns (google.protobuf.Empty);
     rpc ListBlog (google.protobuf.Empty) returns (stream Blog);
 }

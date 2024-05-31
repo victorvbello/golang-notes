@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net"
+	"os"
+	"path/filepath"
 
 	pb "github.com/victorvbello/gonotes/course/grpc/blog/proto"
 	"go.mongodb.org/mongo-driver/bson"
@@ -27,6 +30,7 @@ type Server struct {
 
 type BlogItem struct {
 	ID      primitive.ObjectID `bson:"_id,omitempty"`
+	Img     string             `bson:"img"`
 	Author  string             `bson:"author"`
 	Title   string             `bson:"title"`
 	Content string             `bson:"content"`
@@ -170,6 +174,98 @@ func (s *Server) UpdateBlog(ctx context.Context, in *pb.Blog) (*emptypb.Empty, e
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (s *Server) UploadBlogImg(stream pb.BlogService_UploadBlogImgServer) error {
+	log.Printf("-------UploadBlogImg request------\n")
+
+	var blogID, fileName, mimeType string
+	var file *os.File
+	fileSize := uint32(0)
+
+	currentDir, err := os.Getwd()
+	if err != nil {
+		log.Printf("os.Getwd error: %v", err)
+		return status.Errorf(
+			codes.Internal,
+			"could not upload img",
+		)
+	}
+
+	for {
+		req, err := stream.Recv()
+
+		if err != nil {
+			if err == io.EOF {
+				log.Printf("io.EOF error: %v", err)
+				break
+			}
+			log.Printf("stream.Recv error: %v", err)
+			return status.Errorf(
+				codes.Internal,
+				"could not upload img",
+			)
+		}
+
+		switch reqV := req.Data.(type) {
+		case *pb.UploadBlogImgRequest_Metadata:
+			blogID = reqV.Metadata.BlogID
+			fileName = reqV.Metadata.FileName
+			mimeType = reqV.Metadata.MimeType
+
+			if file == nil {
+				completeFileBasePath := filepath.Join(currentDir, "course/grpc/blog/server/tmp", blogID)
+				if _, err := os.Stat(completeFileBasePath); os.IsNotExist(err) {
+					os.MkdirAll(completeFileBasePath, 0700)
+				}
+				file, err = os.Create(filepath.Join(completeFileBasePath, fileName))
+				if err != nil {
+					log.Printf("os.Create error: %v", err)
+					return status.Errorf(
+						codes.Internal,
+						"could not upload img",
+					)
+				}
+
+			}
+		case *pb.UploadBlogImgRequest_FileData:
+			if file == nil {
+				log.Println("file is nil")
+				return status.Errorf(
+					codes.Internal,
+					"could not upload img",
+				)
+			}
+			dataChunk := reqV.FileData
+			fileSize += uint32(len(dataChunk))
+
+			dataWrite, err := file.Write(dataChunk)
+
+			if err != nil {
+				log.Printf("file.Write error: %v", err)
+				return status.Errorf(
+					codes.Internal,
+					"could not upload img",
+				)
+			}
+
+			if dataWrite != len(dataChunk) {
+				log.Println("file.Write error: written data are different from data chunk")
+				return status.Errorf(
+					codes.Internal,
+					"could not upload img",
+				)
+			}
+		}
+	}
+
+	file.Close()
+
+	filePath := filepath.Base(file.Name())
+
+	log.Printf("success upload\n-file %s \n-size: %d\n-mime:%s\n-blogID: %s\n", filePath, fileSize, mimeType, blogID)
+
+	return stream.SendAndClose(&emptypb.Empty{})
 }
 
 func (s *Server) ListBlog(in *emptypb.Empty, stream pb.BlogService_ListBlogServer) error {

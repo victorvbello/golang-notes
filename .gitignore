@@ -6,6 +6,7 @@ utils/json_translate/output/*
 *.csr
 *.cnf
 *.key
+**/tmp
 
 #vscode
 .vscode

@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	BlogService_CreateBlog_FullMethodName = "/blog.BlogService/CreateBlog"
-	BlogService_ReadBlog_FullMethodName   = "/blog.BlogService/ReadBlog"
-	BlogService_UpdateBlog_FullMethodName = "/blog.BlogService/UpdateBlog"
-	BlogService_DeleteBlog_FullMethodName = "/blog.BlogService/DeleteBlog"
-	BlogService_ListBlog_FullMethodName   = "/blog.BlogService/ListBlog"
+	BlogService_CreateBlog_FullMethodName    = "/blog.BlogService/CreateBlog"
+	BlogService_ReadBlog_FullMethodName      = "/blog.BlogService/ReadBlog"
+	BlogService_UpdateBlog_FullMethodName    = "/blog.BlogService/UpdateBlog"
+	BlogService_UploadBlogImg_FullMethodName = "/blog.BlogService/UploadBlogImg"
+	BlogService_DeleteBlog_FullMethodName    = "/blog.BlogService/DeleteBlog"
+	BlogService_ListBlog_FullMethodName      = "/blog.BlogService/ListBlog"
 )
 
 // BlogServiceClient is the client API for BlogService service.
@@ -34,6 +35,7 @@ type BlogServiceClient interface {
 	CreateBlog(ctx context.Context, in *Blog, opts ...grpc.CallOption) (*BlogId, error)
 	ReadBlog(ctx context.Context, in *BlogId, opts ...grpc.CallOption) (*Blog, error)
 	UpdateBlog(ctx context.Context, in *Blog, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UploadBlogImg(ctx context.Context, opts ...grpc.CallOption) (BlogService_UploadBlogImgClient, error)
 	DeleteBlog(ctx context.Context, in *BlogId, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListBlog(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BlogService_ListBlogClient, error)
 }
@@ -73,6 +75,40 @@ func (c *blogServiceClient) UpdateBlog(ctx context.Context, in *Blog, opts ...gr
 	return out, nil
 }
 
+func (c *blogServiceClient) UploadBlogImg(ctx context.Context, opts ...grpc.CallOption) (BlogService_UploadBlogImgClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BlogService_ServiceDesc.Streams[0], BlogService_UploadBlogImg_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &blogServiceUploadBlogImgClient{stream}
+	return x, nil
+}
+
+type BlogService_UploadBlogImgClient interface {
+	Send(*UploadBlogImgRequest) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type blogServiceUploadBlogImgClient struct {
+	grpc.ClientStream
+}
+
+func (x *blogServiceUploadBlogImgClient) Send(m *UploadBlogImgRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *blogServiceUploadBlogImgClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *blogServiceClient) DeleteBlog(ctx context.Context, in *BlogId, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, BlogService_DeleteBlog_FullMethodName, in, out, opts...)
@@ -83,7 +119,7 @@ func (c *blogServiceClient) DeleteBlog(ctx context.Context, in *BlogId, opts ...
 }
 
 func (c *blogServiceClient) ListBlog(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (BlogService_ListBlogClient, error) {
-	stream, err := c.cc.NewStream(ctx, &BlogService_ServiceDesc.Streams[0], BlogService_ListBlog_FullMethodName, opts...)
+	stream, err := c.cc.NewStream(ctx, &BlogService_ServiceDesc.Streams[1], BlogService_ListBlog_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -121,6 +157,7 @@ type BlogServiceServer interface {
 	CreateBlog(context.Context, *Blog) (*BlogId, error)
 	ReadBlog(context.Context, *BlogId) (*Blog, error)
 	UpdateBlog(context.Context, *Blog) (*emptypb.Empty, error)
+	UploadBlogImg(BlogService_UploadBlogImgServer) error
 	DeleteBlog(context.Context, *BlogId) (*emptypb.Empty, error)
 	ListBlog(*emptypb.Empty, BlogService_ListBlogServer) error
 	mustEmbedUnimplementedBlogServiceServer()
@@ -138,6 +175,9 @@ func (UnimplementedBlogServiceServer) ReadBlog(context.Context, *BlogId) (*Blog,
 }
 func (UnimplementedBlogServiceServer) UpdateBlog(context.Context, *Blog) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBlog not implemented")
+}
+func (UnimplementedBlogServiceServer) UploadBlogImg(BlogService_UploadBlogImgServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadBlogImg not implemented")
 }
 func (UnimplementedBlogServiceServer) DeleteBlog(context.Context, *BlogId) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlog not implemented")
@@ -212,6 +252,32 @@ func _BlogService_UpdateBlog_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BlogService_UploadBlogImg_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(BlogServiceServer).UploadBlogImg(&blogServiceUploadBlogImgServer{stream})
+}
+
+type BlogService_UploadBlogImgServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*UploadBlogImgRequest, error)
+	grpc.ServerStream
+}
+
+type blogServiceUploadBlogImgServer struct {
+	grpc.ServerStream
+}
+
+func (x *blogServiceUploadBlogImgServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *blogServiceUploadBlogImgServer) Recv() (*UploadBlogImgRequest, error) {
+	m := new(UploadBlogImgRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _BlogService_DeleteBlog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlogId)
 	if err := dec(in); err != nil {
@@ -276,6 +342,11 @@ var BlogService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadBlogImg",
+			Handler:       _BlogService_UploadBlogImg_Handler,
+			ClientStreams: true,
+		},
 		{
 			StreamName:    "ListBlog",
 			Handler:       _BlogService_ListBlog_Handler,
