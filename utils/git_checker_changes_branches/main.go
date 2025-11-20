@@ -8,6 +8,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -21,11 +24,25 @@ const (
 
 type requestResult map[string]interface{}
 type requestHeaders map[string]string
+
+type pullRequstListItem struct {
+	PRID        int
+	AuthorAlias string
+}
+
 type repoInputItem struct {
-	Repo       string `json:"repo"`
-	Branch1    string `json:"branch1"`
-	Branch2    string `json:"branch2"`
-	BrowserUrl string `json:"browser_url"`
+	Repo           string               `json:"repo"`
+	Branch1        string               `json:"branch1"`
+	Branch2        string               `json:"branch2"`
+	BrowserUrl     string               `json:"browser_url"`
+	PullRequstList []pullRequstListItem `json:"pull_requst_list"`
+}
+
+type createPullRequestPayload struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
+	Head  string `json:"head"`
+	Base  string `json:"base"`
 }
 
 func HttpRequest(method string, url string, headers requestHeaders) (requestResult, error) {
@@ -198,6 +215,41 @@ func main() {
 			if result["total_commits"] == nil {
 				log.Fatalf("[%d] %v", index, fmt.Errorf("total_commits, is nil"))
 			}
+			if result["commits"] != nil {
+				commits := result["commits"].([]interface{})
+				regexPR := regexp.MustCompile(`#\d+`)
+				for _, c := range commits {
+					safeAuthor := make(map[string]interface{})
+					safeCommit := make(map[string]interface{})
+					authorAlias := ""
+					commitMsg := ""
+					safeCommitItem := c.(map[string]interface{})
+					if safeCommitItem["commit"] != nil {
+						safeCommit = safeCommitItem["commit"].(map[string]interface{})
+					}
+					if safeCommit["message"] == nil || !strings.Contains(safeCommit["message"].(string), "Merge pull request") {
+						continue
+					}
+					commitMsg = safeCommit["message"].(string)
+					if safeCommitItem["author"] != nil {
+						safeAuthor = safeCommitItem["author"].(map[string]interface{})
+					}
+					if safeAuthor["login"] != nil {
+						authorAlias = safeAuthor["login"].(string)
+					}
+					PRIDStr := regexPR.FindString(commitMsg)
+					PRIDStr = strings.TrimPrefix(PRIDStr, "#")
+					if PRIDStr == "" {
+						continue
+					}
+					prID, err := strconv.Atoi(PRIDStr)
+					if err != nil {
+						log.Fatalf("[%d] %v", index, fmt.Errorf("strcv.Atoi: %w", err))
+					}
+					cRepo.PullRequstList = append(cRepo.PullRequstList, pullRequstListItem{prID, authorAlias})
+				}
+
+			}
 			total_commits := result["total_commits"].(float64)
 			log.Printf("[%d] Process [%s]\n", index, cRepo.Repo)
 			if total_commits > 0 {
@@ -225,5 +277,8 @@ func main() {
 
 	for _, r := range readyToProd {
 		fmt.Printf("[%s] %s\n", r.Repo, r.BrowserUrl)
+		for _, pri := range r.PullRequstList {
+			fmt.Printf("\t- #%d @%s\n", pri.PRID, pri.AuthorAlias)
+		}
 	}
 }
