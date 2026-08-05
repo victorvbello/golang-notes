@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gonotes/design-patterns/singleton_pattern/wallet"
+
+	"github.com/victorvbello/gonotes/design-patterns/singleton_pattern/wallet"
 )
 
 func main() {

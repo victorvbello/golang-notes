@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"gonotes/utils/json_translate/helpers"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/victorvbello/gonotes/utils/json_translate/helpers"
 )
 
 const (

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"gonotes/utils/json_translate/orderedjson"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +13,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/victorvbello/gonotes/utils/json_translate/orderedjson"
 )
 
 const (

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gonotes/design-patterns/builder_pattern/car"
+
+	"github.com/victorvbello/gonotes/design-patterns/builder_pattern/car"
 )
 
 func main() {

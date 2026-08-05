@@ -32,13 +32,13 @@ func main() {
 		fmt.Printf("Error %v \n", err)
 	}
 	for fileIndex, filePath := range filePaths {
-		file, err := os.Open(filePath)
+		f, err := os.OpenFile(filePath, os.O_RDONLY, 0644)
 		if err != nil {
 			fmt.Printf("os.Open %d Error %v\n", fileIndex, err)
 			continue
 		}
-		defer file.Close()
-		b, err := io.ReadAll(file)
+		defer f.Close()
+		b, err := io.ReadAll(f)
 		if err != nil {
 			fmt.Printf("io.ReadAll %d Error %v\n", fileIndex, err)
 			continue

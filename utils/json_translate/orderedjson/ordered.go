@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"gonotes/utils/json_translate/flatjson"
+	"github.com/victorvbello/gonotes/utils/json_translate/flatjson"
 )
 
 type Map []MapEntry

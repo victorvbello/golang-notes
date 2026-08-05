@@ -21,6 +21,6 @@ func CreateNewDevice(deviceType int) (Device, error) {
 	case PC_DEVICE:
 		return new(PcDevice), nil
 	default:
-		return nil, errors.New("device nof found")
+		return nil, errors.New("device not found")
 	}
 }

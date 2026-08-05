@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gonotes/design-patterns/factory_pattern/device"
+
+	"github.com/victorvbello/gonotes/design-patterns/factory_pattern/device"
 )
 
 var err error
