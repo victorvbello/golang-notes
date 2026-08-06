@@ -21,6 +21,11 @@
 - [Simple JSON Translate](./utils/json_translate/index.md)
 
 ## Design Patterns
-- [Factory Pattern](./design-patterns/factory_pattern)
-- [Singleton Pattern](./design-patterns/singleton_pattern)
+- [Adapter Pattern](./design-patterns/adapter_pattern/)
 - [Builder Pattern](./design-patterns/builder_pattern)
+- [Decorator Pattern](./design-patterns/decorator_pattern/)
+- [Factory Pattern](./design-patterns/factory_pattern)
+- [Iterator Pattern](./design-patterns/iterator_pattern/)
+- [Observer Pattern](./design-patterns/observer_pattern/)
+- [Singleton Pattern](./design-patterns/singleton_pattern)
+- [Strategy Pattern](./design-patterns/strategy_pattern)
